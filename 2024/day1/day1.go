@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func get_values() [][]int {
+func get_values() ([]int, []int) {
 	file, err := os.Open("./input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -39,8 +39,7 @@ func get_values() [][]int {
 		log.Fatal(err)
 	}
 
-	return_val := [][]int{left_values, right_values}
-	return return_val
+	return left_values, right_values
 }
 
 func get_counts(values []int) map[int]int {
@@ -52,12 +51,10 @@ func get_counts(values []int) map[int]int {
 }
 
 func main() {
-	values := get_values()
-	right_values := values[1]
+	left_values, right_values := get_values()
 	right_value_counts := get_counts(right_values)
 
 	similarity_score := 0
-	left_values := values[0]
 	for _, value := range left_values {
 		if count, ok := right_value_counts[value]; ok {
 			similarity_score += value * count
