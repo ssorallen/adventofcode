@@ -5,25 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"slices"
 	"strconv"
 	"strings"
-
-	"golang.org/x/exp/constraints"
 )
 
-func Abs[T constraints.Integer](x T) T {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
-
-func sort_asc(i, j int) int {
-	return i - j
-}
-
-func main() {
+func get_values() [][]int {
 	file, err := os.Open("./input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -53,14 +39,30 @@ func main() {
 		log.Fatal(err)
 	}
 
-	slices.SortFunc(left_values, sort_asc)
-	slices.SortFunc(right_values, sort_asc)
+	return_val := [][]int{left_values, right_values}
+	return return_val
+}
 
-	total_distance := 0
-	for i, left_value := range left_values {
-		right_value := right_values[i]
-		total_distance += Abs(left_value - right_value)
+func get_counts(values []int) map[int]int {
+	counts_map := make(map[int]int)
+	for _, value := range values {
+		counts_map[value] += 1
+	}
+	return counts_map
+}
+
+func main() {
+	values := get_values()
+	right_values := values[1]
+	right_value_counts := get_counts(right_values)
+
+	similarity_score := 0
+	left_values := values[0]
+	for _, value := range left_values {
+		if count, ok := right_value_counts[value]; ok {
+			similarity_score += value * count
+		}
 	}
 
-	fmt.Printf("%v", total_distance)
+	fmt.Printf("%v", similarity_score)
 }
